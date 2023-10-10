@@ -17,11 +17,9 @@ class Main extends PluginBase implements Listener {
     private $config;
 
     public function onEnable(): void {
-        $this->saveResource("config.yml");
+        
         $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        $this->saveDefaultConfig();
-
         // Initialize PurePerms
         $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
 
@@ -32,38 +30,44 @@ class Main extends PluginBase implements Listener {
         }
     }
 
-    public function onPlayerJoin(PlayerJoinEvent $event): void {
-        $player = $event->getPlayer();
-        $group = $this->getUserRank($player);
-        $message = $this->config->get("join_popup_message");
-        foreach ($this->getServer()->getOnlinePlayers() as $player) {
-
-        if ($group !== null) {
-            // $message = $this->config->get("join_popup_message", "{rank} {player} Join Server!");
-            $message = str_replace("{player}", $player->getName(), $message);
-            $message = str_replace("{rank}", $group, $message);
-            $player->sendPopup($message);
-        }
+    public function onDisable():void {
+        $this->saveResource("config.yml");
     }
 
+    public function onPlayerJoin(PlayerJoinEvent $event): void {
+        $joinedPlayer = $event->getPlayer();
+        $group = $this->getUserRank($joinedPlayer);
+    
+        foreach ($this->getServer()->getOnlinePlayers() as $player) {
+            if ($group !== null) {
+                $message = $this->config->get("join_popup_message", "{rank} {player} Join Server!");
+                $message = str_replace("{player}", $joinedPlayer->getName(), $message);
+                $message = str_replace("{rank}", $group, $message);
+                $player->sendPopup($message);
+            }
+        }
+    
         $event->setJoinMessage(""); // Disable the default join message
     }
+    
 
     public function onPlayerQuit(PlayerQuitEvent $event): void {
-        $player = $event->getPlayer();
-        $group = $this->getUserRank($player);
-        $message = $this->config->get("leave_popup_message");
+        $leftPlayer = $event->getPlayer();
+        $group = $this->getUserRank($leftPlayer);
+    
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
-
-        if ($group !== null) {
-            // $message = $this->config->get("leave_popup_message", "{rank} {player} Left Server!");
-            $message = str_replace("{player}", $player->getName(), $message);
-            $message = str_replace("{rank}", $group, $message);
-            $player->sendPopup($message);
+            if ($group !== null) {
+                $message = $this->config->get("leave_popup_message", "{rank} {player} Left Server!");
+                $message = str_replace("{player}", $leftPlayer->getName(), $message);
+                $message = str_replace("{rank}", $group, $message);
+                $player->sendPopup($message);
+            }
         }
+    
+        $event->setQuitMessage(""); // Disable the default quit message
     }
-        $event->setQuitMessage("");// Disable the default leave message
-}
+    
+       
 
     private function getUserRank(PMPlayer $player): ?string {
         if ($this->purePerms !== null) {
