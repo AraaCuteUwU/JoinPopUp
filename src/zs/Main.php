@@ -39,7 +39,7 @@ class Main extends PluginBase implements Listener {
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
 
         if ($group !== null) {
-            // $message = $this->config->get("join_popup_message");
+            // $message = $this->config->get("join_popup_message", "{rank} {player} Join Server!");
             $message = str_replace("{player}", $player->getName(), $message);
             $message = str_replace("{rank}", $group, $message);
             $player->sendPopup($message);
@@ -56,7 +56,7 @@ class Main extends PluginBase implements Listener {
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
 
         if ($group !== null) {
-            // $message = $this->config->get("leave_popup_message");
+            // $message = $this->config->get("leave_popup_message", "{rank} {player} Left Server!");
             $message = str_replace("{player}", $player->getName(), $message);
             $message = str_replace("{rank}", $group, $message);
             $player->sendPopup($message);
