@@ -1,0 +1,3 @@
+# JoinLeavePopups plugin configuration
+join_popup_message: "{rank} {player} Join Server!"
+leave_popup_message: "{rank} {player} Left Server!"
