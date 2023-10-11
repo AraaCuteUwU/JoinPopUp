@@ -2,7 +2,7 @@
 
 namespace zs;
 
-use _64FF00\PurePerms\PurePerms;
+use _64FF00\PureChat\PureChat;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -11,18 +11,19 @@ use pocketmine\player\Player;
 
 class Main extends PluginBase implements Listener {
 
-    /** @var ?PurePerms */
-    private ?PurePerms $purePerms;
+    /** @var ?PureChat */
+    private ?PureChat $pureChat;
 
     public function onEnable(): void {
         
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-        // Initialize PurePerms
-        $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
+        // Initialize pureChat
+        $this->pureChat = $this->getServer()->getPluginManager()->getPlugin("PureChat");
 
-        if ($this->purePerms === null) {
-            $this->getLogger()->error("PurePerms not found. This plugin requires PurePerms.");
+        if ($this->pureChat === null) {
+            $this->getLogger()->error("PureChat not found. This plugin requires PureChat.");
             $this->getServer()->getPluginManager()->disablePlugin($this);
+            return;
         }
     }
 
@@ -30,8 +31,8 @@ class Main extends PluginBase implements Listener {
         $joinedPlayer = $event->getPlayer();
         $group = $this->getUserRank($joinedPlayer);
 
-        $message = "{rank} §e{player} Join Server!";
-        $message = str_replace("{player}", $joinedPlayer->getName(), $message);
+        $message = "{rank} §r§eJoin Server!";
+        // $message = str_replace("{player}", $joinedPlayer->getName(), $message);
 
         if ($group !== null) {
             $message = str_replace("{rank}", $group, $message);
@@ -50,8 +51,8 @@ class Main extends PluginBase implements Listener {
         $leftPlayer = $event->getPlayer();
         $group = $this->getUserRank($leftPlayer);
 
-        $message = "{rank} §c{player} Left Server!";
-        $message = str_replace("{player}", $leftPlayer->getName(), $message);
+        $message = "{rank} §r§cLeft Server!";
+        // $message = str_replace("{player}", $leftPlayer->getName(), $message);
 
         if ($group !== null) {
             $message = str_replace("{rank}", $group, $message);
@@ -67,14 +68,15 @@ class Main extends PluginBase implements Listener {
     }
 
     private function getUserRank(Player $player): ?string {
-        if ($this->purePerms !== null) {
-            $group = $this->purePerms->getUserDataMgr()->getGroup($player);
-
-            if ($group !== null) {
-                return $group->getName();
+        if ($this->pureChat !== null) {
+            // thanks to fredy
+            $nametag = $this->pureChat->getNametag($player);
+    
+            if ($nametag !== null) {
+                return $nametag;
             }
         }
-
+    
         return null;
     }
 }
