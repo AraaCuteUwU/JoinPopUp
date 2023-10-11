@@ -2,18 +2,17 @@
 
 namespace zs;
 
+use _64FF00\PurePerms\PurePerms;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\player\Player as PMPlayer;
-use pocketmine\utils\Config;
-use pocketmine\utils\TextFormat;
+use pocketmine\player\Player;
 
 class Main extends PluginBase implements Listener {
 
-    /** @var PurePerms */
-    private $purePerms;
+    /** @var ?PurePerms */
+    private ?PurePerms $purePerms;
 
     public function onEnable(): void {
         
@@ -24,7 +23,6 @@ class Main extends PluginBase implements Listener {
         if ($this->purePerms === null) {
             $this->getLogger()->error("PurePerms not found. This plugin requires PurePerms.");
             $this->getServer()->getPluginManager()->disablePlugin($this);
-            return;
         }
     }
 
@@ -68,7 +66,7 @@ class Main extends PluginBase implements Listener {
         $event->setQuitMessage(""); // Disable the default quit message
     }
 
-    private function getUserRank(PMPlayer $player): ?string {
+    private function getUserRank(Player $player): ?string {
         if ($this->purePerms !== null) {
             $group = $this->purePerms->getUserDataMgr()->getGroup($player);
 
