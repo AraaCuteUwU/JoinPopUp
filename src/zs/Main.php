@@ -17,7 +17,6 @@ class Main extends PluginBase implements Listener {
 
     public function onEnable(): void {
         
-        $this->saveDefaultConfig();
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         // Initialize PurePerms
         $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
@@ -33,7 +32,7 @@ class Main extends PluginBase implements Listener {
         $joinedPlayer = $event->getPlayer();
         $group = $this->getUserRank($joinedPlayer);
 
-        $message = $this->getConfig()->get("join_popup_message");
+        $message = "{rank} §e{player} Join Server!";
         $message = str_replace("{player}", $joinedPlayer->getName(), $message);
 
         if ($group !== null) {
@@ -53,7 +52,7 @@ class Main extends PluginBase implements Listener {
         $leftPlayer = $event->getPlayer();
         $group = $this->getUserRank($leftPlayer);
 
-        $message = $this->getConfig("leave_popup_message");
+        $message = "{rank} §c{player} Left Server!";
         $message = str_replace("{player}", $leftPlayer->getName(), $message);
 
         if ($group !== null) {
