@@ -3,3 +3,4 @@ version: 1.0.0
 author: zsfell
 main: zs\Main
 api: 5.0.0
+depend: PurePerms
